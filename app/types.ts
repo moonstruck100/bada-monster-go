@@ -17,6 +17,7 @@ export interface Monster {
   detected: string;
   name: string;
   emoji: string;
+  image: string;
   kind: string;
   rarity: "일반" | "희귀" | "에픽";
   pollution: number;
