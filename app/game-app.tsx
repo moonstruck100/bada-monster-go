@@ -263,7 +263,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   const nextMission = MISSIONS.find((m) => !state.user.claimedMissions.includes(m.id)) ?? MISSIONS[0];
   return <>
     <section className="hero-card">
-      <div className="hero-busan-image" /><div className="hero-wave" /><div className="hero-copy"><span className="hello">BUSAN OCEAN GUARDIAN · 광안리 작전</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
+      <div className="hero-busan-image" /><div className="hero-wave" /><div className="hero-copy"><span className="hello">BUSAN OCEAN GUARDIAN · {region.shortName} 작전</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
       <div className="mascot busan-mark"><span>🐬</span><i>🪼</i></div>
       <div className="level-row"><b>LV.{state.user.level}</b><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /><span>{state.user.xp} / {state.user.xpGoal} EXP</span></div>
     </section>
