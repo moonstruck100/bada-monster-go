@@ -67,3 +67,4 @@ button:disabled { cursor:not-allowed; }
 .start-seagull{width:180px;height:150px;margin:8px auto 3px;background:none!important;clip-path:none!important;filter:drop-shadow(0 8px 8px rgba(2,65,90,.25));position:relative;z-index:2}.start-seagull img{display:block;width:100%;height:100%;object-fit:contain}.start-content h1{font-size:30px!important}
 .start-seagull:before{content:"";position:absolute;inset:13px 8px 7px;border-radius:50%;background:radial-gradient(circle at 42% 35%,#b7f3f0 0%,#64d2df 48%,#159bbf 100%);box-shadow:0 8px 20px rgba(2,91,122,.2);z-index:-1}.start-seagull img{position:relative;z-index:1}
 .dex-summary>div{display:flex;align-items:baseline;gap:4px}.dex-summary>div small{font-size:14px!important;font-weight:800;order:1}.dex-summary>div b{font-size:30px!important;order:2;line-height:1}
+.dex-card-body em{font-style:normal!important;font-weight:800!important;font-size:11px!important;color:var(--navy);display:block;margin-top:7px}
