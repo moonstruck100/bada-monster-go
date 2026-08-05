@@ -333,7 +333,7 @@ function Raid({ region, cleanup, goMap }: { region: GameState["regions"][number]
 
 function Dex({ captured }: { captured: Record<string, number> }) {
   const caught = MONSTERS.filter((m) => (captured[m.key] ?? 0) > 0).length;
-  return <><div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다 곳곳의 오염 몬스터를 발견해 보세요.</p></div><section className="dex-summary"><div><span>도감 달성도</span><strong>{caught} <small>/ {MONSTERS.length}</small></strong></div><div className="dex-ring" style={{ "--percent": `${(caught / MONSTERS.length) * 100}%` } as CSSProperties}><b>{Math.round((caught / MONSTERS.length) * 100)}%</b></div></section><div className="filter-pills"><button className="active">전체</button><button>포획 완료</button><button>미발견</button></div><section className="dex-grid">{MONSTERS.map((m) => { const count = captured[m.key] ?? 0; return <article key={m.key} className={`dex-card ${count ? "found" : "unknown"}`}><div className="dex-image">{count ? <img src={m.image} alt={`${m.name} 도감 이미지`} /> : <span>?</span>}<i>{count ? "✓ 포획" : "미발견"}</i></div><div><span className={`rarity ${m.rarity}`}>{m.rarity}</span><h2>{count ? m.name : "???"}</h2><p>{count ? `${m.kind} 오염형` : "탐험으로 발견하세요"}</p><b>{count ? `포획 ${count}회` : "LOCKED"}</b></div></article>; })}</section></>;
+  return <><div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다 곳곳의 오염 몬스터를 발견해 보세요.</p></div><section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{MONSTERS.length - found}</b></div><div><small>전체</small><b>{MONSTERS.length}</b></div></section><div className="filter-pills"><button className="active">전체</button><button>포획 완료</button><button>미발견</button></div><section className="dex-grid">{MONSTERS.map((m) => { const count = captured[m.key] ?? 0; return <article key={m.key} className={`dex-card ${count ? "found" : "unknown"}`}><div className="dex-image">{count ? <img src={m.image} alt={`${m.name} 도감 이미지`} /> : <span>?</span>}<i>{count ? "✓ 포획" : "미발견"}</i></div><div><span className={`rarity ${m.rarity}`}>{m.rarity}</span><h2>{count ? m.name : "???"}</h2><p>{count ? `${m.kind} 오염형` : "탐험으로 발견하세요"}</p><b>{count ? `포획 ${count}회` : "LOCKED"}</b></div></article>; })}</section></>;
 }
 
 function DexV2({ captured }: { captured: Record<string, number> }) {
@@ -345,7 +345,7 @@ function DexV2({ captured }: { captured: Record<string, number> }) {
   });
   return <>
     <div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다에서 만난 정화 몬스터를 모아보세요.</p></div>
-    <section className="dex-summary"><div><b>{found}</b><small>발견</small></div><div><b>{MONSTERS.length - found}</b><small>미발견</small></div><div><b>{MONSTERS.length}</b><small>전체</small></div></section>
+    <section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{MONSTERS.length - found}</b></div><div><small>전체</small><b>{MONSTERS.length}</b></div></section>
     <div className="filter-pills">
       <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>전체</button>
       <button className={filter === "found" ? "active" : ""} onClick={() => setFilter("found")}>포획 완료</button>
