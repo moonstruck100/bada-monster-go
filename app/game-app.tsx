@@ -227,7 +227,7 @@ export default function GameApp() {
 
       <main className="main-content">
         {screen === "home" && <Home state={state} region={region} captureCount={captureCount} completedCount={completedCount} go={go} />}
-        {screen === "explore" && <Explore preview={preview} fileName={fileName} analyzing={analyzing} result={result} analysisConfidence={analysisConfidence} monster={detectedMonster} captureStage={captureStage} fileRef={fileRef} onFile={onFile} analyze={analyze} capture={capture} shareRisk={shareRisk} reset={() => { setPreview(null); setResult(null); setAnalysisConfidence(0); setCaptureStage("idle"); }} />}
+        {screen === "explore" && <Explore preview={preview} fileName={fileName} analyzing={analyzing} result={result} analysisConfidence={analysisConfidence} monster={detectedMonster} captureStage={captureStage} fileRef={fileRef} onFile={onFile} analyze={analyze} correctResult={(value: string) => { setResult(value); setAnalysisConfidence(99); }} capture={capture} shareRisk={shareRisk} reset={() => { setPreview(null); setResult(null); setAnalysisConfidence(0); setCaptureStage("idle"); }} />}
         {screen === "map" && <BeachMap state={state} visit={visitRegion} />}
         {screen === "raid" && <Raid region={region} cleanup={cleanupRaid} goMap={() => go("map")} />}
         {screen === "dex" && <DexV2 captured={state.user.captured} />}
@@ -292,7 +292,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   </>;
 }
 
-function Explore({ preview, fileName, analyzing, result, analysisConfidence, monster, captureStage, fileRef, onFile, analyze, capture, shareRisk, reset }: any) {
+function Explore({ preview, fileName, analyzing, result, analysisConfidence, monster, captureStage, fileRef, onFile, analyze, correctResult, capture, shareRisk, reset }: any) {
   return <>
     <div className="page-heading"><span>AI CAMERA EXPLORATION</span><h1>카메라 탐험</h1><p>해변에서 발견한 쓰레기나 위험 생물을 촬영해 주세요.</p></div>
     {!preview ? <section className="upload-zone" onClick={() => fileRef.current?.click()}>
@@ -303,7 +303,7 @@ function Explore({ preview, fileName, analyzing, result, analysisConfidence, mon
     <input ref={fileRef} className="sr-only" type="file" accept="image/*" capture="environment" onChange={onFile} />
     {preview && !result && <button className="primary-button analyze-button" disabled={analyzing} onClick={analyze}>{analyzing ? <><span className="spinner" /> AI가 바다 오염을 분석하고 있어요</> : <>✨ AI 분석하기</>}</button>}
     {analyzing && <div className="scan-card"><div className="scan-line" /><span>물체 형태와 해양 안전 데이터를 비교 중...</span></div>}
-    {result && <div className="analysis-confidence"><span>AI DEMO MATCH</span><b>{result}</b><strong>{analysisConfidence}%</strong><small>{analysisConfidence >= 90 ? "파일명·촬영 정보 힌트를 함께 반영했어요" : "실제 서비스에서는 학습된 이미지 모델로 교체할 수 있어요"}</small></div>}
+    {result && <div className="analysis-confidence"><span>AI DEMO MATCH</span><b>{result}</b><strong>{analysisConfidence}%</strong><small>{analysisConfidence >= 90 ? "파일명·촬영 정보 힌트를 함께 반영했어요" : "실제 서비스에서는 학습된 이미지 모델로 교체할 수 있어요"}</small></div>}{result && <section className="result-correction"><b>결과가 다르면 직접 선택해 주세요</b><div>{["플라스틱병", "캔", "비닐", "담배꽁초", "폐그물", "해파리", "일반 물체"].map((item) => <button key={item} className={result === item ? "active" : ""} onClick={() => correctResult(item)}>{item}</button>)}</div></section>}
     {result === "일반 물체" && <section className="result-empty"><span>🌊</span><h2>오염 물체가 아니에요</h2><p>깨끗한 바다를 확인했어요. 다른 곳도 탐험해 보세요!</p><button onClick={reset}>새 사진 분석하기</button></section>}
     {result === "해파리" && <SafetyResult share={shareRisk} />}
     {monster && <MonsterEncounter monster={monster} stage={captureStage} onCapture={() => capture(monster)} />}

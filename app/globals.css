@@ -73,3 +73,4 @@ button:disabled { cursor:not-allowed; }
 .profile-avatar span{display:block!important;font-size:48px!important;line-height:1}.profile-avatar:before{display:none!important}
 .profile-avatar{background:#e9fbfa!important;background-image:none!important}.profile-avatar i{display:none!important}.profile-avatar span{display:block!important;font-size:52px!important;text-shadow:none!important}
 .boss-peek>img{width:58px;height:48px;object-fit:contain;margin-right:8px;filter:drop-shadow(0 5px 4px rgba(6,61,92,.18))}
+.result-correction{margin-top:12px;padding:13px;background:#fff;border:1px solid var(--line);border-radius:18px}.result-correction>b{display:block;font-size:11px;margin-bottom:9px;color:var(--navy)}.result-correction>div{display:flex;flex-wrap:wrap;gap:6px}.result-correction button{padding:7px 9px;border-radius:10px;background:#edf5f7;color:#20536b;font-size:10px;font-weight:800}.result-correction button.active{background:var(--blue);color:#fff}
