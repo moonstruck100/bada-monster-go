@@ -9,10 +9,10 @@ export const MONSTERS: Monster[] = [
 ];
 
 export const REGIONS: Region[] = [
-  { id: "haeundae", name: "해운대해수욕장", shortName: "해운대", pollution: 34, trashCount: 184, participants: 96, reports: 2, mission: "플라스틱병 20개 정화", monsters: ["부산 물떡 슬라임", "부산 어묵 게"], boss: "부산항 플라스틱 고래", bossEmoji: "🐋", bossHp: 100, cleanupPoints: 330 },
-  { id: "gwangalli", name: "광안리해수욕장", shortName: "광안리", pollution: 60, trashCount: 267, participants: 128, reports: 4, mission: "비닐 쓰레기 집중 수거", monsters: ["자갈치 비닐 유령", "해운대 소금 연기 악마"], boss: "오염 크라켄", bossEmoji: "🐙", bossHp: 100, cleanupPoints: 240 },
-  { id: "songjeong", name: "송정해수욕장", shortName: "송정", pollution: 22, trashCount: 91, participants: 54, reports: 1, mission: "폐그물 흔적 찾기", monsters: ["영도 어망 크라켄", "부산항 플라스틱 고래"], boss: "심해 오염왕", bossEmoji: "👑", bossHp: 72, cleanupPoints: 410 },
-  { id: "dadaepo", name: "다대포해수욕장", shortName: "다대포", pollution: 76, trashCount: 318, participants: 73, reports: 3, mission: "갯벌 오염물 30개 정화", monsters: ["오일 슬라임", "독연기 드래곤"], boss: "블랙 웨일", bossEmoji: "🐳", bossHp: 100, cleanupPoints: 120 },
+  { id: "haeundae", name: "해운대해수욕장", shortName: "해운대", pollution: 34, trashCount: 184, participants: 96, reports: 2, mission: "플라스틱병 20개 정화", monsters: ["부산 물떡 슬라임", "부산 어묵 게"], boss: "부산항 플라스틱 고래", bossEmoji: "🐋", bossImage: "monsters/plastic-whale.png", bossHp: 100, cleanupPoints: 330 },
+  { id: "gwangalli", name: "광안리해수욕장", shortName: "광안리", pollution: 60, trashCount: 267, participants: 128, reports: 4, mission: "비닐 쓰레기 집중 수거", monsters: ["자갈치 비닐 유령", "해운대 소금 연기 악마"], boss: "오염 크라켄", bossEmoji: "🐙", bossImage: "monsters/sea-net-kraken.png", bossHp: 100, cleanupPoints: 240 },
+  { id: "songjeong", name: "송정해수욕장", shortName: "송정", pollution: 22, trashCount: 91, participants: 54, reports: 1, mission: "폐그물 흔적 찾기", monsters: ["영도 어망 크라켄", "부산항 플라스틱 고래"], boss: "심해 오염왕", bossEmoji: "👑", bossImage: "monsters/toxic-smoke-dragon.png", bossHp: 72, cleanupPoints: 410 },
+  { id: "dadaepo", name: "다대포해수욕장", shortName: "다대포", pollution: 76, trashCount: 318, participants: 73, reports: 3, mission: "갯벌 오염물 30개 정화", monsters: ["오일 슬라임", "독연기 드래곤"], boss: "블랙 웨일", bossEmoji: "🐳", bossImage: "monsters/styrofoam-whale.png", bossHp: 100, cleanupPoints: 120 },
 ];
 
 export const INITIAL_STATE: GameState = {

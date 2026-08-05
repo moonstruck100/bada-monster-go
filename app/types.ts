@@ -51,6 +51,7 @@ export interface Region {
   monsters: string[];
   boss: string;
   bossEmoji: string;
+  bossImage?: string;
   bossHp: number;
   cleanupPoints: number;
 }

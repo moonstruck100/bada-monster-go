@@ -242,7 +242,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
     <div className="start-content">
       <span className="start-kicker">BUSAN OCEAN ADVENTURE</span>
       <div className="busan-start-art"><img src="busan-hero.png" alt="광안대교와 부산 바다, 갈매기 일러스트" /></div>
-      <div className="start-drop-character" aria-label="바다 물방울 캐릭터"><span>💧</span><i>✦</i></div>
+      <div className="start-drop-character" aria-label="바다 거품 캐릭터"><span>🫧</span><i>✦</i></div>
       <h1>바다몬스터<span>GO!</span></h1>
       <p>게임으로 부산 바다를 지켜요!</p>
       <button className="start-button" onClick={onStart}><span>▶</span> 게임 시작</button>
@@ -258,7 +258,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   return <>
     <section className="hero-card">
       <div className="hero-busan-image" /><div className="hero-wave" /><div className="hero-copy"><span className="hello">BUSAN OCEAN GUARDIAN · 광안리 작전</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
-      <div className="mascot busan-mark"><span>🌉</span><i>🕊️</i></div>
+      <div className="mascot busan-mark"><span>🐬</span><i>🪼</i></div>
       <div className="level-row"><b>LV.{state.user.level}</b><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /><span>{state.user.xp} / {state.user.xpGoal} EXP</span></div>
     </section>
     <section className="stats-grid">
@@ -326,7 +326,7 @@ function BeachMap({ state, visit }: { state: GameState; visit: (id: string, dest
 function Raid({ region, cleanup, goMap }: { region: GameState["regions"][number]; cleanup: () => void; goMap: () => void }) {
   const bossActive = region.pollution <= 30;
   const defeated = region.bossHp <= 0;
-  return <><div className="page-heading raid-heading"><span>CO-OP CLEANUP RAID</span><h1>{region.shortName} 해변 정화 레이드</h1><button onClick={goMap}>지역 변경 ⌄</button></div><section className="raid-hero"><div className="raid-sky"><span className={bossActive ? "boss-active" : "boss-locked"}>{region.bossEmoji}</span><div className="raid-users">👥 {region.participants}명 참여 중</div></div><div className="raid-panel"><div className="raid-stat"><span>현재 지역 오염도</span><strong>{region.pollution}%</strong></div><Progress value={region.pollution} tone={region.pollution > 60 ? "coral" : "mint"} /><div className="threshold"><span>0% 깨끗</span><b>보스 출현 30%</b><span>100% 위험</span></div></div></section>
+  return <><div className="page-heading raid-heading"><span>CO-OP CLEANUP RAID</span><h1>{region.shortName} 해변 정화 레이드</h1><button onClick={goMap}>지역 변경 ⌄</button></div><section className="raid-hero"><div className="raid-sky">{region.bossImage ? <img className={`boss-image ${bossActive ? "boss-active" : "boss-locked"}`} src={region.bossImage} alt={region.boss} /> : <span className={bossActive ? "boss-active" : "boss-locked"}>{region.bossEmoji}</span>}<div className="raid-users">👥 {region.participants}명 참여 중</div></div><div className="raid-panel"><div className="raid-stat"><span>현재 지역 오염도</span><strong>{region.pollution}%</strong></div><Progress value={region.pollution} tone={region.pollution > 60 ? "coral" : "mint"} /><div className="threshold"><span>0% 깨끗</span><b>보스 출현 30%</b><span>100% 위험</span></div></div></section>
     {!bossActive ? <section className="boss-lock"><span className="lock-icon">🔒</span><small>출현 예정 보스</small><h2>{region.bossEmoji} {region.boss}</h2><p>지역 오염도를 <b>30% 이하</b>로 낮추면<br />봉인이 풀리고 보스가 나타나요!</p><div className="cleanup-needed"><span>필요 정화량</span><strong>{Math.max(0, (region.pollution - 30) * 10)} POINT</strong></div><button className="primary-button" onClick={cleanup}>♻️ 정화 활동 +50P</button></section> : <section className={`boss-battle ${defeated ? "defeated" : ""}`}><div className="boss-alert">{defeated ? "RAID CLEAR" : "⚡ BOSS APPEARED ⚡"}</div><div className="boss-avatar">{region.bossEmoji}</div><h2>{defeated ? `${region.boss} 정화 완료!` : region.boss}</h2><p>{defeated ? "참여한 모든 수호대에게 보상이 지급됐어요." : "수호대의 정화 에너지를 모아 보스를 물리치세요!"}</p><div className="hp-label"><span>BOSS HP</span><b>{region.bossHp} / 100</b></div><Progress value={region.bossHp} tone="coral" /><div className="raid-rewards"><span>⭐ 150 EXP</span><span>📖 희귀 도감</span><span>🪙 500 P</span></div>{!defeated && <button className="danger-button" onClick={cleanup}>⚡ 정화 에너지 공격</button>}</section>}
     <section className="raid-community"><SectionTitle title="수호대 공동 목표" /><div className="community-row"><div className="avatar-stack"><i>🧑</i><i>👩</i><i>🧒</i><i>+{Math.max(0, region.participants - 3)}</i></div><p>오늘 <b>{region.participants}명</b>이 함께<br /><span>{region.cleanupPoints.toLocaleString()} POINT</span>를 정화했어요</p></div></section></>;
 }
@@ -382,6 +382,7 @@ function Store({ state, redeem }: { state: GameState; redeem: (product: (typeof 
 }
 
 function Profile({ state, captureCount, completedCount, go, reset }: { state: GameState; captureCount: number; completedCount: number; go: (s: Screen) => void; reset: () => void }) {
+  const diver = state.user.level % 2 === 0 ? "🤿" : "🧑‍🚀";
   return <><section className="profile-hero"><div className="profile-avatar"><span>BUSAN</span><i>LV.{state.user.level}</i></div><small>BUSAN OCEAN GUARDIAN</small><h1>{state.user.nickname}</h1><p>부산 바다를 지키는 멋진 수호대장</p><div className="profile-xp"><span><b>다음 레벨까지</b><i>{state.user.xp} / {state.user.xpGoal} EXP</i></span><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /></div></section><section className="profile-stats"><div><span>♚</span><b>{captureCount}</b><small>포획 몬스터</small></div><div><span>✓</span><b>{completedCount}</b><small>완료 미션</small></div><div><span>♻</span><b>{state.user.environmentPoints.toLocaleString()}</b><small>환경 포인트</small></div></section><button className="eco-wallet" onClick={() => go("store")}><span>🪙</span><div><small>MY ECO POINT</small><b>{state.user.environmentPoints.toLocaleString()} POINT</b><p>포인트로 부산의 특별한 보상을 만나보세요.</p></div><i>상점 가기 ›</i></button><SectionTitle title="획득한 배지" /><section className="badge-row">{state.user.badges.map((badge, i) => <div key={`${badge}-${i}`}><span>{i % 3 === 0 ? "🌊" : i % 3 === 1 ? "♻️" : "🏆"}</span><b>{badge}</b></div>)}</section><SectionTitle title="최근 활동 기록" /><section className="activity-list">{state.user.activity.map((a) => <div key={a.id}><span>✓</span><p><b>{a.text}</b><small>{a.time}</small></p></div>)}</section><section className="settings"><button onClick={() => go("missions")}><span>🎯</span>미션 보상 관리<i>›</i></button><button onClick={() => go("safety")}><span>🛟</span>바다 안전 정보<i>›</i></button><button className="reset-button" onClick={reset}><span>↻</span>게임 데이터 초기화<i>›</i></button></section><p className="version">바다몬스터고 Demo v1.1 · Made for Busan</p></>;
 }
 
