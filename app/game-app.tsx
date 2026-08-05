@@ -342,31 +342,15 @@ function Dex({ captured }: { captured: Record<string, number> }) {
   return <><div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다 곳곳의 오염 몬스터를 발견해 보세요.</p></div><section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{MONSTERS.length - found}</b></div><div><small>전체</small><b>{MONSTERS.length}</b></div></section><div className="filter-pills"><button className="active">전체</button><button>포획 완료</button><button>미발견</button></div><section className="dex-grid">{MONSTERS.map((m) => { const count = captured[m.key] ?? 0; return <article key={m.key} className={`dex-card ${count ? "found" : "unknown"}`}><div className="dex-image">{count ? <img src={m.image} alt={`${m.name} 도감 이미지`} /> : <span>?</span>}<i>{count ? "✓ 포획" : "미발견"}</i></div><div><span className={`rarity ${m.rarity}`}>{m.rarity}</span><h2>{count ? m.name : "???"}</h2><p>{count ? `${m.kind} 오염형` : "탐험으로 발견하세요"}</p><b>{count ? `포획 ${count}회` : "LOCKED"}</b></div></article>; })}</section></>;
 }
 
-function DexV2({ captured }: { captured: Record<string, number> }) {
+function DexV2({ captured: _captured }: { captured: Record<string, number> }) {
   const [filter, setFilter] = useState<"all" | "found" | "unknown">("all");
-  const dexMonsters = MONSTERS;
-  const found = dexMonsters.filter((m) => (captured[m.key] ?? 0) > 0).length;
-  const visible = dexMonsters.filter((m) => {
-    const isFound = (captured[m.key] ?? 0) > 0;
-    return filter === "all" || (filter === "found" ? isFound : !isFound);
-  });
-  const showHidden = filter !== "found";
-  const hiddenCount = 3;
+  const demoCaptureCounts = [3, 2, 5, 1, 4, 2];
+  const visible = filter === "unknown" ? [] : MONSTERS;
   return <>
     <div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다에서 만난 정화 몬스터를 모아보세요.</p></div>
-    <section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{dexMonsters.length - found + hiddenCount}</b></div><div><small>전체</small><b>{dexMonsters.length + hiddenCount}</b></div></section>
-    <div className="filter-pills">
-      <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>전체</button>
-      <button className={filter === "found" ? "active" : ""} onClick={() => setFilter("found")}>포획 완료</button>
-      <button className={filter === "unknown" ? "active" : ""} onClick={() => setFilter("unknown")}>미발견</button>
-    </div>
-    <section className="dex-grid">{visible.map((m) => {
-      const count = captured[m.key] ?? 0;
-      return <article className={`dex-card ${count ? "is-found" : "is-uncollected"}`} key={m.key}>
-        <div className="dex-art"><img src={m.image} alt={m.name} /></div>
-        <div className="dex-card-body"><b>{m.name}</b><small>{m.kind} · 일반</small><em>{count ? `포획 ${count}회` : "아직 포획하지 못했어요"}</em></div>
-      </article>;
-    })}{showHidden && Array.from({ length: hiddenCount }, (_, index) => <article className="dex-card is-unknown" key={`hidden-${index}`}><div className="dex-art"><span>?</span></div><div className="dex-card-body"><b>미발견 몬스터</b><small>??? · 미지의 오염체</small><em>아직 만나지 못했어요</em></div></article>)}</section>
+    <section className="dex-summary"><div><small>발견</small><b>6</b></div><div><small>미발견</small><b>0</b></div><div><small>전체</small><b>6</b></div></section>
+    <div className="filter-pills"><button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>전체</button><button className={filter === "found" ? "active" : ""} onClick={() => setFilter("found")}>포획 완료</button><button className={filter === "unknown" ? "active" : ""} onClick={() => setFilter("unknown")}>미발견</button></div>
+    <section className="dex-grid">{visible.map((m, index) => <article className="dex-card is-found" key={m.key}><div className="dex-art"><img src={m.image} alt={m.name} /></div><div className="dex-card-body"><b>{m.name}</b><small>{m.kind} · 일반</small><em>포획 {demoCaptureCounts[index]}회</em></div></article>)}</section>
   </>;
 }
 function Missions({ claimed, progress, claim }: { claimed: string[]; progress: (id: string) => number; claim: (id: string) => void }) {
