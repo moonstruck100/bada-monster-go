@@ -19,7 +19,7 @@ function readState(): GameState {
     return {
       ...cloneInitial(),
       ...parsed,
-      regions: REGIONS.map((region) => ({ ...region, ...(parsed.regions?.find((savedRegion) => savedRegion.id === region.id) ?? {}) , bossImage: region.bossImage })),
+      regions: REGIONS.map((region) => ({ ...region, ...(parsed.regions?.find((savedRegion) => savedRegion.id === region.id) ?? {}) , boss: region.boss, bossImage: region.bossImage })),
     };
   } catch {
     return cloneInitial();
