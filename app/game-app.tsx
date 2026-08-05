@@ -242,7 +242,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
     <div className="start-content">
       <span className="start-kicker">BUSAN OCEAN ADVENTURE</span>
       <div className="busan-start-art"><img src="busan-hero.png" alt="광안대교와 부산 바다, 갈매기 일러스트" /></div>
-      <div className="start-seagull" aria-label="부산 갈매기 캐릭터"><img src="/bada-monster-go/seagull-mascot.png" alt="부산 갈매기 캐릭터" /></div>
+      <div className="start-seagull" aria-label="부산 갈매기 캐릭터"><img src="/bada-monster-go/start-seagull-card.png" alt="부산 갈매기 일러스트" /></div>
       <h1>바다몬스터<span>GO!</span></h1>
       <p>게임으로 부산 바다를 지켜요!</p>
       <button className="start-button" onClick={onStart}><span>▶</span> 게임 시작</button>
