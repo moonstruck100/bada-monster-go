@@ -5,7 +5,7 @@ import { INITIAL_STATE, MISSIONS, MONSTERS, PRODUCTS, REGIONS } from "./data";
 import type { GameState, Monster, Screen } from "./types";
 
 const STORAGE_KEY = "badamonstergo-state-v2";
-const ANALYSIS_RESULTS = ["플라스틱병", "캔", "비닐", "담배꽁초", "폐그물", "해파리", "일반 물체"];
+const ANALYSIS_RESULTS = ["플라스틱병", "캔", "비닐", "담배꽁초", "스티로폼", "유리", "해파리", "일반 물체"];
 
 const cloneInitial = (): GameState => JSON.parse(JSON.stringify(INITIAL_STATE));
 const totalCaptured = (state: GameState) => Object.values(state.user.captured).reduce((a, b) => a + b, 0);
@@ -119,7 +119,8 @@ export default function GameApp() {
         : fileHint.includes("can") || fileHint.includes("캔") ? "캔"
         : fileHint.includes("vinyl") || fileHint.includes("plastic-bag") || fileHint.includes("비닐") ? "비닐"
         : fileHint.includes("cigarette") || fileHint.includes("담배") ? "담배꽁초"
-        : fileHint.includes("net") || fileHint.includes("그물") ? "폐그물"
+        : fileHint.includes("foam") || fileHint.includes("styro") ? "스티로폼"
+        : fileHint.includes("glass") ? "유리"
         : fileHint.includes("jelly") || fileHint.includes("해파리") ? "해파리" : null;
       setResult(hinted ?? ANALYSIS_RESULTS[Math.floor(Math.random() * ANALYSIS_RESULTS.length)]);
       setAnalysisConfidence(hinted ? 94 : 76);
@@ -303,7 +304,7 @@ function Explore({ preview, fileName, analyzing, result, analysisConfidence, mon
     <input ref={fileRef} className="sr-only" type="file" accept="image/*" capture="environment" onChange={onFile} />
     {preview && !result && <button className="primary-button analyze-button" disabled={analyzing} onClick={analyze}>{analyzing ? <><span className="spinner" /> AI가 바다 오염을 분석하고 있어요</> : <>✨ AI 분석하기</>}</button>}
     {analyzing && <div className="scan-card"><div className="scan-line" /><span>물체 형태와 해양 안전 데이터를 비교 중...</span></div>}
-    {result && <div className="analysis-confidence"><span>AI DEMO MATCH</span><b>{result}</b><strong>{analysisConfidence}%</strong><small>{analysisConfidence >= 90 ? "파일명·촬영 정보 힌트를 함께 반영했어요" : "실제 서비스에서는 학습된 이미지 모델로 교체할 수 있어요"}</small></div>}{result && <section className="result-correction"><b>결과가 다르면 직접 선택해 주세요</b><div>{["플라스틱병", "캔", "비닐", "담배꽁초", "폐그물", "스티로폼", "유리", "해파리", "일반 물체"].map((item) => <button key={item} className={result === item ? "active" : ""} onClick={() => correctResult(item)}>{item}</button>)}</div></section>}
+    {result && <div className="analysis-confidence"><span>AI DEMO MATCH</span><b>{result}</b><strong>{analysisConfidence}%</strong><small>{analysisConfidence >= 90 ? "파일명·촬영 정보 힌트를 함께 반영했어요" : "실제 서비스에서는 학습된 이미지 모델로 교체할 수 있어요"}</small></div>}{result && <section className="result-correction"><b>결과가 다르면 직접 선택해 주세요</b><div>{["플라스틱병", "캔", "비닐", "담배꽁초", "스티로폼", "유리", "해파리", "일반 물체"].map((item) => <button key={item} className={result === item ? "active" : ""} onClick={() => correctResult(item)}>{item}</button>)}</div></section>}
     {result === "일반 물체" && <section className="result-empty"><span>🌊</span><h2>오염 물체가 아니에요</h2><p>깨끗한 바다를 확인했어요. 다른 곳도 탐험해 보세요!</p><button onClick={reset}>새 사진 분석하기</button></section>}
     {result === "해파리" && <SafetyResult share={shareRisk} />}
     {monster && <MonsterEncounter monster={monster} stage={captureStage} onCapture={() => capture(monster)} />}
