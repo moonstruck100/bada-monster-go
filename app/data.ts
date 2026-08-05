@@ -1,11 +1,11 @@
 import type { GameState, Monster, Region } from "./types";
 
 export const MONSTERS: Monster[] = [
-  { key: "plastic", detected: "플라스틱병", name: "부산 물떡 슬라임", emoji: "🫧", image: "/monsters/mud-slime.png", kind: "플라스틱", rarity: "일반", pollution: 35, xp: 40, points: 120 },
-  { key: "can", detected: "캔", name: "부산 어묵 게", emoji: "🦀", image: "/monsters/fishcake-crab.png", kind: "금속", rarity: "일반", pollution: 42, xp: 45, points: 140 },
-  { key: "vinyl", detected: "비닐", name: "자갈치 비닐 유령", emoji: "👻", image: "/monsters/vinyl-ghost.png", kind: "비닐", rarity: "희귀", pollution: 55, xp: 60, points: 180 },
-  { key: "cigarette", detected: "담배꽁초", name: "해운대 소금 연기 악마", emoji: "😈", image: "/monsters/salt-smoke-imp.png", kind: "담배꽁초", rarity: "희귀", pollution: 68, xp: 70, points: 200 },
-  { key: "net", detected: "폐그물", name: "영도 어망 크라켄", emoji: "🐙", image: "/monsters/sea-net-kraken.png", kind: "폐어구", rarity: "에픽", pollution: 85, xp: 100, points: 280 },
+  { key: "plastic", detected: "플라스틱병", name: "부산 물떡 슬라임", emoji: "🫧", image: "monsters/mud-slime.png", kind: "플라스틱", rarity: "일반", pollution: 35, xp: 40, points: 120 },
+  { key: "can", detected: "캔", name: "부산 어묵 게", emoji: "🦀", image: "monsters/fishcake-crab.png", kind: "금속", rarity: "일반", pollution: 42, xp: 45, points: 140 },
+  { key: "vinyl", detected: "비닐", name: "자갈치 비닐 유령", emoji: "👻", image: "monsters/vinyl-ghost.png", kind: "비닐", rarity: "희귀", pollution: 55, xp: 60, points: 180 },
+  { key: "cigarette", detected: "담배꽁초", name: "해운대 소금 연기 악마", emoji: "😈", image: "monsters/salt-smoke-imp.png", kind: "담배꽁초", rarity: "희귀", pollution: 68, xp: 70, points: 200 },
+  { key: "net", detected: "폐그물", name: "영도 어망 크라켄", emoji: "🐙", image: "monsters/sea-net-kraken.png", kind: "폐어구", rarity: "에픽", pollution: 85, xp: 100, points: 280 },
 ];
 
 export const REGIONS: Region[] = [

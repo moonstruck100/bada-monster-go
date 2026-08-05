@@ -53,6 +53,7 @@ export default function GameApp() {
   const [fileName, setFileName] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [analysisConfidence, setAnalysisConfidence] = useState(0);
   const [captureStage, setCaptureStage] = useState<"idle" | "catching" | "success">("idle");
   const [toast, setToast] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -97,6 +98,7 @@ export default function GameApp() {
     setPreview(URL.createObjectURL(file));
     setFileName(file.name);
     setResult(null);
+    setAnalysisConfidence(0);
     setCaptureStage("idle");
   };
 
@@ -106,7 +108,15 @@ export default function GameApp() {
     setResult(null);
     setCaptureStage("idle");
     window.setTimeout(() => {
-      setResult(ANALYSIS_RESULTS[Math.floor(Math.random() * ANALYSIS_RESULTS.length)]);
+      const fileHint = fileName.toLowerCase();
+      const hinted = fileHint.includes("plastic") || fileHint.includes("bottle") || fileHint.includes("병") ? "플라스틱병"
+        : fileHint.includes("can") || fileHint.includes("캔") ? "캔"
+        : fileHint.includes("vinyl") || fileHint.includes("plastic-bag") || fileHint.includes("비닐") ? "비닐"
+        : fileHint.includes("cigarette") || fileHint.includes("담배") ? "담배꽁초"
+        : fileHint.includes("net") || fileHint.includes("그물") ? "폐그물"
+        : fileHint.includes("jelly") || fileHint.includes("해파리") ? "해파리" : null;
+      setResult(hinted ?? ANALYSIS_RESULTS[Math.floor(Math.random() * ANALYSIS_RESULTS.length)]);
+      setAnalysisConfidence(hinted ? 94 : 76);
       setAnalyzing(false);
     }, 1900);
   };
@@ -211,7 +221,7 @@ export default function GameApp() {
 
       <main className="main-content">
         {screen === "home" && <Home state={state} region={region} captureCount={captureCount} completedCount={completedCount} go={go} />}
-        {screen === "explore" && <Explore preview={preview} fileName={fileName} analyzing={analyzing} result={result} monster={detectedMonster} captureStage={captureStage} fileRef={fileRef} onFile={onFile} analyze={analyze} capture={capture} shareRisk={shareRisk} reset={() => { setPreview(null); setResult(null); setCaptureStage("idle"); }} />}
+        {screen === "explore" && <Explore preview={preview} fileName={fileName} analyzing={analyzing} result={result} analysisConfidence={analysisConfidence} monster={detectedMonster} captureStage={captureStage} fileRef={fileRef} onFile={onFile} analyze={analyze} capture={capture} shareRisk={shareRisk} reset={() => { setPreview(null); setResult(null); setAnalysisConfidence(0); setCaptureStage("idle"); }} />}
         {screen === "map" && <BeachMap state={state} visit={visitRegion} />}
         {screen === "raid" && <Raid region={region} cleanup={cleanupRaid} goMap={() => go("map")} />}
         {screen === "dex" && <Dex captured={state.user.captured} />}
@@ -246,7 +256,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   const nextMission = MISSIONS.find((m) => !state.user.claimedMissions.includes(m.id)) ?? MISSIONS[0];
   return <>
     <section className="hero-card">
-      <div className="hero-wave" /><div className="hero-copy"><span className="hello">반가워요, 수호대장!</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
+      <div className="hero-busan-image" /><div className="hero-wave" /><div className="hero-copy"><span className="hello">BUSAN OCEAN GUARDIAN · 광안리 작전</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
       <div className="mascot">🫧<i>✨</i></div>
       <div className="level-row"><b>LV.{state.user.level}</b><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /><span>{state.user.xp} / {state.user.xpGoal} EXP</span></div>
     </section>
@@ -275,7 +285,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   </>;
 }
 
-function Explore({ preview, fileName, analyzing, result, monster, captureStage, fileRef, onFile, analyze, capture, shareRisk, reset }: any) {
+function Explore({ preview, fileName, analyzing, result, analysisConfidence, monster, captureStage, fileRef, onFile, analyze, capture, shareRisk, reset }: any) {
   return <>
     <div className="page-heading"><span>AI CAMERA EXPLORATION</span><h1>카메라 탐험</h1><p>해변에서 발견한 쓰레기나 위험 생물을 촬영해 주세요.</p></div>
     {!preview ? <section className="upload-zone" onClick={() => fileRef.current?.click()}>
@@ -286,6 +296,7 @@ function Explore({ preview, fileName, analyzing, result, monster, captureStage, 
     <input ref={fileRef} className="sr-only" type="file" accept="image/*" capture="environment" onChange={onFile} />
     {preview && !result && <button className="primary-button analyze-button" disabled={analyzing} onClick={analyze}>{analyzing ? <><span className="spinner" /> AI가 바다 오염을 분석하고 있어요</> : <>✨ AI 분석하기</>}</button>}
     {analyzing && <div className="scan-card"><div className="scan-line" /><span>물체 형태와 해양 안전 데이터를 비교 중...</span></div>}
+    {result && <div className="analysis-confidence"><span>AI DEMO MATCH</span><b>{result}</b><strong>{analysisConfidence}%</strong><small>{analysisConfidence >= 90 ? "파일명·촬영 정보 힌트를 함께 반영했어요" : "실제 서비스에서는 학습된 이미지 모델로 교체할 수 있어요"}</small></div>}
     {result === "일반 물체" && <section className="result-empty"><span>🌊</span><h2>오염 물체가 아니에요</h2><p>깨끗한 바다를 확인했어요. 다른 곳도 탐험해 보세요!</p><button onClick={reset}>새 사진 분석하기</button></section>}
     {result === "해파리" && <SafetyResult share={shareRisk} />}
     {monster && <MonsterEncounter monster={monster} stage={captureStage} onCapture={() => capture(monster)} />}
@@ -308,7 +319,7 @@ function SafetyResult({ share }: { share: () => void }) {
 }
 
 function BeachMap({ state, visit }: { state: GameState; visit: (id: string, destination?: Screen) => void }) {
-  return <><div className="page-heading"><span>BUSAN OCEAN MAP</span><h1>부산 해변 지도</h1><p>정화가 필요한 해변을 선택하고 수호대에 합류하세요.</p></div><div className="map-visual"><div className="map-water">BUSAN<br /><b>OCEAN</b></div>{state.regions.map((r, i) => <button key={r.id} className={`map-pin pin-${i} ${pollutionLabel(r.pollution).className}`} onClick={() => visit(r.id)}><span>{r.pollution}%</span><b>{r.shortName}</b></button>)}</div><div className="map-legend"><span><i className="clean" /> 깨끗함</span><span><i className="normal" /> 보통</span><span><i className="danger" /> 주의</span></div><div className="region-list">{state.regions.map((r) => { const status = pollutionLabel(r.pollution); return <article className="region-card" key={r.id}><div className="region-top"><div><span className={`status-badge ${status.className}`}>{status.label}</span><h2>{r.name}</h2><p>등장 몬스터 · {r.monsters.join(", ")}</p></div><div className="region-score"><b>{r.pollution}%</b><small>오염도</small></div></div><Progress value={r.pollution} tone={status.className} /><div className="region-metrics"><span>🗑️ <b>{r.trashCount}</b><small>쓰레기 발견</small></span><span>👥 <b>{r.participants}</b><small>정화 참여자</small></span><span>⚠️ <b>{r.reports}</b><small>위험 신고</small></span></div><div className="region-mission"><span>오늘 미션</span><b>{r.mission}</b></div><div className="boss-peek"><span>{r.bossEmoji}</span><div><small>REGION BOSS</small><b>{r.boss}</b></div><button onClick={() => visit(r.id)}>레이드 ›</button></div></article>; })}</div></>;
+  return <><div className="page-heading"><span>BUSAN OCEAN MAP</span><h1>부산 해변 지도</h1><p>오염도가 높을수록 지도 위 정화 영역이 넓게 표시돼요.</p></div><div className="map-visual"><div className="map-water">BUSAN<br /><b>OCEAN</b></div>{state.regions.map((r, i) => <button key={`zone-${r.id}`} className={`map-zone zone-${i} ${pollutionLabel(r.pollution).className}`} style={{ "--pollution": `${r.pollution}%` } as CSSProperties} onClick={() => visit(r.id)}><span>{r.shortName}</span><b>{r.pollution}%</b></button>)}{state.regions.map((r, i) => <button key={r.id} className={`map-pin pin-${i} ${pollutionLabel(r.pollution).className}`} onClick={() => visit(r.id)}><span>{r.pollution}%</span><b>{r.shortName}</b></button>)}</div><div className="map-legend"><span><i className="clean" /> 깨끗함 · 작은 영역</span><span><i className="normal" /> 보통</span><span><i className="danger" /> 주의 · 넓은 영역</span></div><div className="region-list">{state.regions.map((r) => { const status = pollutionLabel(r.pollution); return <article className="region-card" key={r.id}><div className="region-top"><div><span className={`status-badge ${status.className}`}>{status.label}</span><h2>{r.name}</h2><p>등장 몬스터 · {r.monsters.join(", ")}</p></div><div className="region-score"><b>{r.pollution}%</b><small>오염도</small></div></div><Progress value={r.pollution} tone={status.className} /><div className="region-metrics"><span>🗑️ <b>{r.trashCount}</b><small>쓰레기 발견</small></span><span>👥 <b>{r.participants}</b><small>정화 참여자</small></span><span>⚠️ <b>{r.reports}</b><small>위험 신고</small></span></div><div className="region-mission"><span>오늘 미션</span><b>{r.mission}</b></div><div className="boss-peek"><span>{r.bossEmoji}</span><div><small>REGION BOSS</small><b>{r.boss}</b></div><button onClick={() => visit(r.id)}>레이드 ›</button></div></article>; })}</div></>;
 }
 
 function Raid({ region, cleanup, goMap }: { region: GameState["regions"][number]; cleanup: () => void; goMap: () => void }) {
@@ -345,7 +356,7 @@ function Store({ state, redeem }: { state: GameState; redeem: (product: (typeof 
 }
 
 function Profile({ state, captureCount, completedCount, go, reset }: { state: GameState; captureCount: number; completedCount: number; go: (s: Screen) => void; reset: () => void }) {
-  return <><section className="profile-hero"><div className="profile-avatar">🧑‍🚀<i>LV.{state.user.level}</i></div><small>BUSAN OCEAN GUARDIAN</small><h1>{state.user.nickname}</h1><p>바다를 지키는 멋진 수호대장</p><div className="profile-xp"><span><b>다음 레벨까지</b><i>{state.user.xp} / {state.user.xpGoal} EXP</i></span><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /></div></section><section className="profile-stats"><div><span>♚</span><b>{captureCount}</b><small>포획 몬스터</small></div><div><span>✓</span><b>{completedCount}</b><small>완료 미션</small></div><div><span>♻</span><b>{state.user.environmentPoints.toLocaleString()}</b><small>환경 포인트</small></div></section><button className="eco-wallet" onClick={() => go("store")}><span>🪙</span><div><small>MY ECO POINT</small><b>{state.user.environmentPoints.toLocaleString()} POINT</b><p>포인트로 부산의 특별한 보상을 만나보세요.</p></div><i>상점 가기 ›</i></button><SectionTitle title="획득한 배지" /><section className="badge-row">{state.user.badges.map((badge, i) => <div key={`${badge}-${i}`}><span>{i % 3 === 0 ? "🌊" : i % 3 === 1 ? "♻️" : "🏆"}</span><b>{badge}</b></div>)}</section><SectionTitle title="최근 활동 기록" /><section className="activity-list">{state.user.activity.map((a) => <div key={a.id}><span>✓</span><p><b>{a.text}</b><small>{a.time}</small></p></div>)}</section><section className="settings"><button onClick={() => go("missions")}><span>🎯</span>미션 보상 관리<i>›</i></button><button onClick={() => go("safety")}><span>🛟</span>바다 안전 정보<i>›</i></button><button className="reset-button" onClick={reset}><span>↻</span>게임 데이터 초기화<i>›</i></button></section><p className="version">바다몬스터고 Demo v1.0 · Made for Busan</p></>;
+  return <><section className="profile-hero"><div className="profile-avatar"><span>BUSAN</span><i>LV.{state.user.level}</i></div><small>BUSAN OCEAN GUARDIAN</small><h1>{state.user.nickname}</h1><p>부산 바다를 지키는 멋진 수호대장</p><div className="profile-xp"><span><b>다음 레벨까지</b><i>{state.user.xp} / {state.user.xpGoal} EXP</i></span><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /></div></section><section className="profile-stats"><div><span>♚</span><b>{captureCount}</b><small>포획 몬스터</small></div><div><span>✓</span><b>{completedCount}</b><small>완료 미션</small></div><div><span>♻</span><b>{state.user.environmentPoints.toLocaleString()}</b><small>환경 포인트</small></div></section><button className="eco-wallet" onClick={() => go("store")}><span>🪙</span><div><small>MY ECO POINT</small><b>{state.user.environmentPoints.toLocaleString()} POINT</b><p>포인트로 부산의 특별한 보상을 만나보세요.</p></div><i>상점 가기 ›</i></button><SectionTitle title="획득한 배지" /><section className="badge-row">{state.user.badges.map((badge, i) => <div key={`${badge}-${i}`}><span>{i % 3 === 0 ? "🌊" : i % 3 === 1 ? "♻️" : "🏆"}</span><b>{badge}</b></div>)}</section><SectionTitle title="최근 활동 기록" /><section className="activity-list">{state.user.activity.map((a) => <div key={a.id}><span>✓</span><p><b>{a.text}</b><small>{a.time}</small></p></div>)}</section><section className="settings"><button onClick={() => go("missions")}><span>🎯</span>미션 보상 관리<i>›</i></button><button onClick={() => go("safety")}><span>🛟</span>바다 안전 정보<i>›</i></button><button className="reset-button" onClick={reset}><span>↻</span>게임 데이터 초기화<i>›</i></button></section><p className="version">바다몬스터고 Demo v1.1 · Made for Busan</p></>;
 }
 
 function BottomNav({ screen, go }: { screen: Screen; go: (s: Screen) => void }) {
