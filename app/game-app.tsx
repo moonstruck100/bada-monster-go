@@ -344,14 +344,17 @@ function Dex({ captured }: { captured: Record<string, number> }) {
 
 function DexV2({ captured }: { captured: Record<string, number> }) {
   const [filter, setFilter] = useState<"all" | "found" | "unknown">("all");
-  const found = MONSTERS.filter((m) => (captured[m.key] ?? 0) > 0).length;
-  const visible = MONSTERS.filter((m) => {
+  const dexMonsters = MONSTERS;
+  const found = dexMonsters.filter((m) => (captured[m.key] ?? 0) > 0).length;
+  const visible = dexMonsters.filter((m) => {
     const isFound = (captured[m.key] ?? 0) > 0;
     return filter === "all" || (filter === "found" ? isFound : !isFound);
   });
+  const showHidden = filter !== "found";
+  const hiddenCount = 3;
   return <>
     <div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다에서 만난 정화 몬스터를 모아보세요.</p></div>
-    <section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{MONSTERS.length - found}</b></div><div><small>전체</small><b>{MONSTERS.length}</b></div></section>
+    <section className="dex-summary"><div><small>발견</small><b>{found}</b></div><div><small>미발견</small><b>{dexMonsters.length - found + hiddenCount}</b></div><div><small>전체</small><b>{dexMonsters.length + hiddenCount}</b></div></section>
     <div className="filter-pills">
       <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>전체</button>
       <button className={filter === "found" ? "active" : ""} onClick={() => setFilter("found")}>포획 완료</button>
@@ -359,14 +362,13 @@ function DexV2({ captured }: { captured: Record<string, number> }) {
     </div>
     <section className="dex-grid">{visible.map((m) => {
       const count = captured[m.key] ?? 0;
-      return <article className={`dex-card ${count ? "is-found" : "is-unknown"}`} key={m.key}>
-        <div className="dex-art">{count ? <img src={m.image} alt={m.name} /> : <span>?</span>}</div>
-        <div className="dex-card-body"><b>{count ? m.name : "미발견 몬스터"}</b><small>{m.type} · {m.rarity}</small><em>{count ? `포획 ${count}회` : "아직 만나지 못했어요"}</em></div>
+      return <article className={`dex-card ${count ? "is-found" : "is-uncollected"}`} key={m.key}>
+        <div className="dex-art"><img src={m.image} alt={m.name} /></div>
+        <div className="dex-card-body"><b>{m.name}</b><small>{m.kind} · 일반</small><em>{count ? `포획 ${count}회` : "아직 포획하지 못했어요"}</em></div>
       </article>;
-    })}</section>
+    })}{showHidden && Array.from({ length: hiddenCount }, (_, index) => <article className="dex-card is-unknown" key={`hidden-${index}`}><div className="dex-art"><span>?</span></div><div className="dex-card-body"><b>미발견 몬스터</b><small>??? · 미지의 오염체</small><em>아직 만나지 못했어요</em></div></article>)}</section>
   </>;
 }
-
 function Missions({ claimed, progress, claim }: { claimed: string[]; progress: (id: string) => number; claim: (id: string) => void }) {
   return <><div className="page-heading"><span>DAILY ECO MISSIONS</span><h1>미션 & 보상</h1><p>작은 실천으로 경험치와 환경 포인트를 모아보세요.</p></div><section className="mission-streak"><div><small>TODAY&apos;S PROGRESS</small><h2>오늘도 멋진 정화 중!</h2><p>미션 3개를 완료하면 특별 보상이 열려요.</p></div><span>🔥<b>{Math.min(progress("three"), 3)}/3</b></span></section><div className="mission-list">{MISSIONS.map((m) => { const value = progress(m.id); const done = value >= m.target; const isClaimed = claimed.includes(m.id); return <article key={m.id} className={done ? "complete" : ""}><div className="mission-big-icon">{m.icon}</div><div className="mission-info"><small>{done ? "미션 완료!" : "진행 중"}</small><h2>{m.title}</h2><p>{m.reward}</p><Progress value={value} max={m.target} tone={done ? "mint" : "blue"} /><span>{Math.min(value, m.target)} / {m.target}</span></div><button disabled={!done || isClaimed} onClick={() => claim(m.id)}>{isClaimed ? "수령 완료" : done ? "보상 받기" : "도전 중"}</button></article>; })}</div><section className="policy-note"><span>🌺</span><div><b>동백전 포인트 연계 예정</b><p>향후 부산시 및 동백전과 협의 후 연계 가능한 기능입니다. 현재 데모에서는 실제 동백전이 지급되지 않습니다.</p></div></section></>;
 }

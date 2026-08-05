@@ -10,7 +10,7 @@ export type Screen =
   | "store"
   | "profile";
 
-export type MonsterKey = "plastic" | "can" | "vinyl" | "cigarette" | "net";
+export type MonsterKey = "plastic" | "can" | "vinyl" | "cigarette" | "styrofoam" | "glass" | "net";
 
 export interface Monster {
   key: MonsterKey;
