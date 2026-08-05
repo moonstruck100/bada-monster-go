@@ -273,7 +273,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
     </section>
     <section className="camera-cta">
       <div><span>AI 바다 탐험</span><h2>사진 속 오염 몬스터를<br />찾아보세요!</h2><button onClick={() => go("explore")}>📷 카메라 탐험 시작 <b>›</b></button></div>
-      <div className="bottle-monster">🧴<i>⚡</i></div>
+      <div className="bottle-monster">👾<i>⚡</i></div>
     </section>
     <SectionTitle eyebrow="DAILY MISSION" title="오늘의 미션" action="전체보기" onAction={() => go("missions")} />
     <section className="mission-preview">
