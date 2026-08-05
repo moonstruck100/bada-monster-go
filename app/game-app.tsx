@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, CSSProperties, useEffect, useRef, useState } from "react";
-import { INITIAL_STATE, MISSIONS, MONSTERS, PRODUCTS } from "./data";
+import { INITIAL_STATE, MISSIONS, MONSTERS, PRODUCTS, REGIONS } from "./data";
 import type { GameState, Monster, Screen } from "./types";
 
 const STORAGE_KEY = "badamonstergo-state-v2";
@@ -14,7 +14,13 @@ function readState(): GameState {
   if (typeof window === "undefined") return cloneInitial();
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? { ...cloneInitial(), ...JSON.parse(saved) } : cloneInitial();
+    if (!saved) return cloneInitial();
+    const parsed = JSON.parse(saved) as GameState;
+    return {
+      ...cloneInitial(),
+      ...parsed,
+      regions: REGIONS.map((region) => ({ ...region, ...(parsed.regions?.find((savedRegion) => savedRegion.id === region.id) ?? {}) , bossImage: region.bossImage })),
+    };
   } catch {
     return cloneInitial();
   }
