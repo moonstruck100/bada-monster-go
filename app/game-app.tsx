@@ -224,7 +224,7 @@ export default function GameApp() {
         {screen === "explore" && <Explore preview={preview} fileName={fileName} analyzing={analyzing} result={result} analysisConfidence={analysisConfidence} monster={detectedMonster} captureStage={captureStage} fileRef={fileRef} onFile={onFile} analyze={analyze} capture={capture} shareRisk={shareRisk} reset={() => { setPreview(null); setResult(null); setAnalysisConfidence(0); setCaptureStage("idle"); }} />}
         {screen === "map" && <BeachMap state={state} visit={visitRegion} />}
         {screen === "raid" && <Raid region={region} cleanup={cleanupRaid} goMap={() => go("map")} />}
-        {screen === "dex" && <Dex captured={state.user.captured} />}
+        {screen === "dex" && <DexV2 captured={state.user.captured} />}
         {screen === "missions" && <Missions claimed={state.user.claimedMissions} progress={missionProgress} claim={claimMission} />}
         {screen === "safety" && <SafetyMap reports={state.riskReports} goExplore={() => go("explore")} />}
         {screen === "store" && <Store state={state} redeem={redeem} />}
@@ -241,7 +241,7 @@ function StartScreen({ onStart }: { onStart: () => void }) {
     <div className="start-cloud c1">☁</div><div className="start-cloud c2">☁</div>
     <div className="start-content">
       <span className="start-kicker">BUSAN OCEAN ADVENTURE</span>
-      <div className="logo-monster"><span className="logo-face">• ◡ •</span><i>♻</i></div>
+      <div className="busan-start-art"><img src="busan-hero.png" alt="광안대교와 부산 바다, 갈매기 일러스트" /></div>
       <h1>바다몬스터<span>GO!</span></h1>
       <p>게임으로 부산 바다를 지켜요!</p>
       <button className="start-button" onClick={onStart}><span>▶</span> 게임 시작</button>
@@ -257,7 +257,7 @@ function Home({ state, region, captureCount, completedCount, go }: { state: Game
   return <>
     <section className="hero-card">
       <div className="hero-busan-image" /><div className="hero-wave" /><div className="hero-copy"><span className="hello">BUSAN OCEAN GUARDIAN · 광안리 작전</span><h1>{state.user.nickname}</h1><p>오늘도 부산 바다를 함께 지켜볼까요?</p></div>
-      <div className="mascot">🫧<i>✨</i></div>
+      <div className="mascot busan-mark"><span>🌉</span><i>🕊️</i></div>
       <div className="level-row"><b>LV.{state.user.level}</b><Progress value={state.user.xp} max={state.user.xpGoal} tone="light" /><span>{state.user.xp} / {state.user.xpGoal} EXP</span></div>
     </section>
     <section className="stats-grid">
@@ -333,6 +333,31 @@ function Raid({ region, cleanup, goMap }: { region: GameState["regions"][number]
 function Dex({ captured }: { captured: Record<string, number> }) {
   const caught = MONSTERS.filter((m) => (captured[m.key] ?? 0) > 0).length;
   return <><div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다 곳곳의 오염 몬스터를 발견해 보세요.</p></div><section className="dex-summary"><div><span>도감 달성도</span><strong>{caught} <small>/ {MONSTERS.length}</small></strong></div><div className="dex-ring" style={{ "--percent": `${(caught / MONSTERS.length) * 100}%` } as CSSProperties}><b>{Math.round((caught / MONSTERS.length) * 100)}%</b></div></section><div className="filter-pills"><button className="active">전체</button><button>포획 완료</button><button>미발견</button></div><section className="dex-grid">{MONSTERS.map((m) => { const count = captured[m.key] ?? 0; return <article key={m.key} className={`dex-card ${count ? "found" : "unknown"}`}><div className="dex-image">{count ? <img src={m.image} alt={`${m.name} 도감 이미지`} /> : <span>?</span>}<i>{count ? "✓ 포획" : "미발견"}</i></div><div><span className={`rarity ${m.rarity}`}>{m.rarity}</span><h2>{count ? m.name : "???"}</h2><p>{count ? `${m.kind} 오염형` : "탐험으로 발견하세요"}</p><b>{count ? `포획 ${count}회` : "LOCKED"}</b></div></article>; })}</section></>;
+}
+
+function DexV2({ captured }: { captured: Record<string, number> }) {
+  const [filter, setFilter] = useState<"all" | "found" | "unknown">("all");
+  const found = MONSTERS.filter((m) => (captured[m.key] ?? 0) > 0).length;
+  const visible = MONSTERS.filter((m) => {
+    const isFound = (captured[m.key] ?? 0) > 0;
+    return filter === "all" || (filter === "found" ? isFound : !isFound);
+  });
+  return <>
+    <div className="page-heading"><span>MONSTER COLLECTION</span><h1>몬스터 도감</h1><p>부산 바다에서 만난 정화 몬스터를 모아보세요.</p></div>
+    <section className="dex-summary"><div><b>{found}</b><small>발견</small></div><div><b>{MONSTERS.length - found}</b><small>미발견</small></div><div><b>{MONSTERS.length}</b><small>전체</small></div></section>
+    <div className="filter-pills">
+      <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>전체</button>
+      <button className={filter === "found" ? "active" : ""} onClick={() => setFilter("found")}>포획 완료</button>
+      <button className={filter === "unknown" ? "active" : ""} onClick={() => setFilter("unknown")}>미발견</button>
+    </div>
+    <section className="dex-grid">{visible.map((m) => {
+      const count = captured[m.key] ?? 0;
+      return <article className={`dex-card ${count ? "is-found" : "is-unknown"}`} key={m.key}>
+        <div className="dex-art">{count ? <img src={m.image} alt={m.name} /> : <span>?</span>}</div>
+        <div className="dex-card-body"><b>{count ? m.name : "미발견 몬스터"}</b><small>{m.type} · {m.rarity}</small><em>{count ? `포획 ${count}회` : "아직 만나지 못했어요"}</em></div>
+      </article>;
+    })}</section>
+  </>;
 }
 
 function Missions({ claimed, progress, claim }: { claimed: string[]; progress: (id: string) => number; claim: (id: string) => void }) {
